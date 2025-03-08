@@ -1,2 +1,0 @@
-# Bonito-CTC model
-
