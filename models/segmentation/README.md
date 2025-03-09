@@ -28,6 +28,48 @@ python scripts/data_prepare_hdf5.py \
     --verbose
 ```
 
+For large segmentation files, you can use the caching option to dramatically speed up processing:
+
+```bash
+# First run - will create the cache file
+python scripts/data_prepare_hdf5.py \
+    --fast5-dir /path/to/fast5/files \
+    --segmentation-file /path/to/segmentation.tsv \
+    --output-dir /path/to/output/directory \
+    --cache-file /path/to/segmentation_cache.h5 \
+    --total-files 10 \
+    --window-size 4000 \
+    --window-overlap 200 \
+    --n-cores 4 \
+    --verbose
+
+# Subsequent runs - will use the cache file (much faster)
+python scripts/data_prepare_hdf5.py \
+    --fast5-dir /path/to/fast5/files \
+    --segmentation-file /path/to/segmentation.tsv \
+    --output-dir /path/to/other/output/directory \
+    --cache-file /path/to/segmentation_cache.h5 \
+    --total-files 10 \
+    --window-size 4000 \
+    --window-overlap 200 \
+    --n-cores 4 \
+    --verbose
+```
+
+For maximum efficiency, the script will always utilize all available cores (`--n-cores`) for parallel processing, regardless of how many final output files (`--total-files`) you request. For example, if you want a single output file but have 8 cores available:
+
+```bash
+# Will use 8 cores to process data in parallel, then merge into a single file
+python scripts/data_prepare_hdf5.py \
+    --fast5-dir /path/to/fast5/files \
+    --segmentation-file /path/to/segmentation.tsv \
+    --output-dir /path/to/output/directory \
+    --cache-file /path/to/segmentation_cache.h5 \
+    --total-files 1 \
+    --n-cores 8 \
+    --verbose
+```
+
 ### Training
 
 Train the segmentation model using the prepared HDF5 data:
